@@ -1,0 +1,24 @@
+name: NoMachine Remote Desktop
+
+on:
+  workflow_dispatch:
+
+jobs:
+  nx:
+    runs-on: windows-latest
+
+    steps:
+      - name: Download NoMachine
+        run: |
+          curl -L -o nx.exe https://download.nomachine.com/download/8.12/Windows/nomachine_8.12.12_64.exe
+
+      - name: Install NoMachine
+        run: |
+          Start-Process nx.exe -ArgumentList "/S" -Wait
+
+      - name: Enable NoMachine Server
+        run: |
+          net start nxserver
+
+      - name: Show Public IP (debug)
+        run: curl ifconfig.me
