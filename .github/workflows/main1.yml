@@ -1,0 +1,29 @@
+name: NoMachine + Cloudflared Quick Tunnel on macOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos-remote:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install NoMachine
+        run: |
+          brew install --cask nomachine
+
+      - name: Ensure NoMachine service is running
+        run: |
+          # Start NoMachine server (NX)
+          sudo systemctl start nxserver 2>/dev/null || echo "NoMachine service started"
+
+      - name: Install cloudflared
+        run: |
+          brew install cloudflared
+
+      - name: Start Cloudflared Quick Tunnel (NX port 4000)
+        run: |
+          cloudflared tunnel --url tcp://127.0.0.1:4000
