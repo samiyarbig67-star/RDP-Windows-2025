@@ -1,0 +1,29 @@
+name: NoMachine + Cloudflared on Ubuntu 24.04
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ubuntu-remote:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Install NoMachine
+        run: |
+          wget https://download.nomachine.com/download/8.12/Linux/nomachine_8.12.12_amd64.deb
+          sudo apt update
+          sudo apt install ./nomachine_8.12.12_amd64.deb -y
+
+      - name: Install cloudflared
+        run: |
+          wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo apt install ./cloudflared-linux-amd64.deb -y
+
+      - name: Start NX server
+        run: |
+          sudo systemctl start nxserver
+          sudo systemctl status nxserver --no-pager
+
+      - name: Start Cloudflared Quick Tunnel
+        run: |
+          cloudflared tunnel --url tcp://127.0.0.1:4000
