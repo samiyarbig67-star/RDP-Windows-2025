@@ -1,0 +1,30 @@
+name: Windows Remote Desktop with Tailscale
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows-remote:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tailscale
+        run: choco install tailscale -y
+
+      - name: Start Tailscale
+        run: |
+          Start-Process "C:\Program Files (x86)\Tailscale IPN\tailscale.exe" -ArgumentList "up --authkey $env:TS_AUTH_KEY --accept-routes"
+
+      - name: Install NoMachine
+        run: choco install nomachine -y
+
+      - name: Start NoMachine Server
+        run: |
+          Start-Process "C:\Program Files (x86)\NoMachine\bin\nxserver.exe" -ArgumentList "--startup"
+
+      - name: Output Tailscale IP
+        run: |
+          & "C:\Program Files (x86)\Tailscale IPN\tailscale.exe" ip
