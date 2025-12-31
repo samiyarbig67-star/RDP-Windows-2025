@@ -1,0 +1,28 @@
+name: macOS Remote Desktop with Tailscale
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos-remote:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tailscale
+        run: brew install --cask tailscale
+
+      - name: Start Tailscale
+        run: |
+          sudo tailscaled &
+          sudo tailscale up --authkey ${{ secrets.TS_AUTH_KEY }} --accept-routes
+
+      - name: Install NoMachine
+        run: |
+          brew install --cask nomachine
+          /Applications/NoMachine.app/Contents/MacOS/nxserver --startup
+
+      - name: Output Tailscale IP
+        run: tailscale ip
