@@ -16,7 +16,6 @@ jobs:
 
       - name: Start Tailscale
         run: |
-          sudo tailscaled &
           sudo tailscale up --authkey ${{ secrets.TS_AUTH_KEY }} --accept-routes
 
       - name: Install NoMachine
