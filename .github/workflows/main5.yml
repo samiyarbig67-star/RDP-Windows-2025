@@ -1,0 +1,30 @@
+name: Ubuntu 24.04 Remote Desktop with Tailscale
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ubuntu-remote:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Tailscale
+        run: |
+          curl -fsSL https://tailscale.com/install.sh | sh
+
+      - name: Start Tailscale
+        run: |
+          sudo tailscaled &
+          sudo tailscale up --authkey ${{ secrets.TS_AUTH_KEY }} --accept-routes
+
+      - name: Install NoMachine
+        run: |
+          wget https://download.nomachine.com/download/8.12/Linux/nomachine_8.12.12_amd64.deb
+          sudo apt install ./nomachine_8.12.12_amd64.deb -y
+          sudo systemctl start nxserver
+
+      - name: Output Tailscale IP
+        run: tailscale ip
